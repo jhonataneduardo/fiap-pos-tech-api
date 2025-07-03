@@ -1,0 +1,15 @@
+model Vehicle {
+    id        String   @id @db.Uuid
+    brand     String
+    model     String
+    year      Int
+    color     String
+    price     Float
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    // Relacionamento com vendas
+    sales Sale[]
+
+    @@map("vehicles")
+}

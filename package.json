@@ -1,0 +1,32 @@
+{
+  "name": "fiap-pos-tech-api",
+  "version": "1.0.0",
+  "description": "Tech Challenge API | Software Architecture FIAP",
+  "main": "index.js",
+  "repository": "https://github.com/jhonataneduardo/fiap-pos-tech-api.git",
+  "author": "Jhonatan Eduardo <jhonatanepp@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only --require tsconfig-paths/register --ignore-watch node_modules src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "prisma:migrate": "npx prisma migrate dev --schema prisma/schema --name init",
+    "prisma:generate": "npx prisma generate --schema prisma/schema"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.11.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.1",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "prisma": "^6.11.0",
+    "uuid": "^11.1.0",
+    "zod": "^3.25.71"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3"
+  }
+}
