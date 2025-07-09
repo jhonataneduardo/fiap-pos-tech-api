@@ -6,21 +6,21 @@ import { CustomerStatus } from './enums';
 export interface CustomerEntityProps extends BaseEntityProps {
     name: string
     email: string
-    national_id: string
+    nationalId: string
     status: CustomerStatus
 }
 
 export class CustomerEntity extends BaseEntity {
     public name: string;
     public email: string;
-    public national_id: string;
+    public nationalId: string;
     public status: CustomerStatus;
 
     constructor(props: CustomerEntityProps) {
         super(props);
         this.name = props.name;
         this.email = props.email;
-        this.national_id = props.national_id;
+        this.nationalId = props.nationalId;
         this.status = props.status;
     }
 }
