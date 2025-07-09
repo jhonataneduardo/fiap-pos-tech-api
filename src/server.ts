@@ -1,5 +1,5 @@
 import app from './app';
-import { systemConfig, jwtConfig } from '@config/index';
+import { systemConfig } from '@config/index';
 
 const PORT = systemConfig.port || 3000;
 

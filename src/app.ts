@@ -1,8 +1,9 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import morgan from 'morgan';
 
-import mainRouter from '@core/infrastructure/http/routes';
+import mainRouter from '@/core/infrastructure/http/routes';
 
 class App {
     public server: Express;
@@ -15,6 +16,7 @@ class App {
     }
 
     private middlewares(): void {
+        this.server.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
         this.server.use(helmet());
         this.server.use(cors());
         this.server.use(express.json());

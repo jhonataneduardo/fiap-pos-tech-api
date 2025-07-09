@@ -11,9 +11,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "prisma:migrate": "npx prisma migrate dev --schema prisma/schema --name init",
-    "prisma:generate": "npx prisma generate --schema prisma/schema"
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@prisma/client": "^6.11.0",
@@ -21,12 +19,19 @@
     "dotenv": "^17.0.1",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
+    "morgan": "^1.10.0",
     "prisma": "^6.11.0",
     "uuid": "^11.1.0",
     "zod": "^3.25.71"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.3"
+    "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.0.10",
+    "nodemon": "^3.1.10",
+    "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.3"
   }
 }
