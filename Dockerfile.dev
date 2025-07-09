@@ -1,0 +1,21 @@
+FROM node:20-alpine AS development
+
+RUN apk update && apk upgrade --no-cache
+
+WORKDIR /app
+
+# Instala dependências de desenvolvimento
+RUN apk add --no-cache python3 make g++ openssl
+
+# Copia os arquivos de configuração
+COPY package.json yarn.lock ./
+
+RUN yarn install
+
+COPY . .
+
+RUN npx prisma generate --schema prisma/schema.prisma
+
+EXPOSE 3000
+
+CMD ["sh", "-c", "npx prisma migrate dev --schema prisma/schema.prisma --name init && yarn dev"]

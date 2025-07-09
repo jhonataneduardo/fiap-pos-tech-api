@@ -1,0 +1,86 @@
+version: '3.8'
+
+services:
+  fiap-pos-tech-db:
+    image: postgres:15-alpine
+    container_name: fiap-pos-tech-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - fiap-pos-tech-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  fiap-pos-tech-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fiap-pos-tech-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      DATABASE_URL: ${DATABASE_URL}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET}
+    ports:
+      - "${PORT}:3000"
+    depends_on:
+      fiap-pos-tech-db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - fiap-pos-tech-network
+    profiles:
+      - production
+    command: >
+      sh -c "
+        echo 'Waiting for database...' &&
+        sleep 10 &&
+        npx prisma migrate deploy --schema prisma/schema.prisma &&
+        npm start
+      "
+
+  fiap-pos-tech-api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: fiap-pos-tech-api-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: ${PORT}
+      DATABASE_URL: ${DATABASE_URL}
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET}
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      fiap-pos-tech-db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - fiap-pos-tech-network
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  fiap-pos-tech-network:
+    driver: bridge
