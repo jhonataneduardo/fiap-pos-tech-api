@@ -32,8 +32,9 @@ export class SaleEntity extends BaseEntity {
 }
 
 export class SaleEntityFactory {
-    static create(props: Omit<SaleEntityProps, 'id'>): SaleEntity {
+    static create(props: Omit<SaleEntityProps, 'id' | 'paymentCode'>): SaleEntity {
         const id = uuidv7();
-        return new SaleEntity({ ...props, id });
+        const paymentCode = `PAY-${id.slice(30, 38).toUpperCase()}`;
+        return new SaleEntity({ ...props, id, paymentCode });
     }
 }

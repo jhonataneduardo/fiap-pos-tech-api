@@ -1,8 +1,53 @@
 import { UseCaseInterface } from "@/core/application/use-case.interface";
+import { NotFoundError } from "@/core/application/errors/app.error";
 
-export class RegisterNewSaleUseCase implements UseCaseInterface<string, string> {
-    async execute(request?: string): Promise<string> {
-        // Implement your logic to register a new sale
-        return "New sale registered successfully";
+import { SaleRepositoryInterface } from "@/modules/vehicle_sales/domain/repositories/sale-respository.interface";
+import { VehicleRepositoryInterface } from "@/modules/vehicle_sales/domain/repositories/vehicle-respository.interface";
+import { CustomerRepositoryInterface } from "@/modules/vehicle_sales/domain/repositories/customer-respository.interface";
+import { InputSaleDTO, OutputSaleDTO } from "@/modules/vehicle_sales/application/dtos/sale.dto";
+import { SaleEntityFactory } from "@/modules/vehicle_sales/domain/entities/sale.entity";
+import { SaleStatus } from "@/modules/vehicle_sales/domain/entities/enums";
+
+export class RegisterNewSaleUseCase implements UseCaseInterface<InputSaleDTO, OutputSaleDTO> {
+    constructor(
+        private readonly saleRepository: SaleRepositoryInterface,
+        private readonly vehicleRepository: VehicleRepositoryInterface,
+        private readonly customerRepository: CustomerRepositoryInterface
+    ) { }
+
+    async execute(request: InputSaleDTO): Promise<OutputSaleDTO> {
+        const customer = await this.customerRepository.getCustomerByNationalId(request.customer_national_id);
+        if (!customer) {
+            throw new NotFoundError(`Customer with national ID ${request.customer_national_id} not found.`);
+        }
+
+        const vehicle = await this.vehicleRepository.getVehicleById(request.vehicle_id);
+        if (!vehicle) {
+            throw new NotFoundError(`Vehicle with ID ${request.vehicle_id} not found.`);
+        }
+
+        const dateNow = new Date();
+        
+        const newSale = await this.saleRepository.createSale(SaleEntityFactory.create({
+            vehicleId: request.vehicle_id,
+            customerId: customer.id,
+            saleDate: dateNow,
+            totalPrice: vehicle.price,
+            status: SaleStatus.PENDING,
+            createdAt: dateNow,
+            updatedAt: dateNow,
+        }));
+
+        return {
+            id: newSale.id,
+            vehicle_id: newSale.vehicleId,
+            customer_id: newSale.customerId,
+            sale_date: newSale.saleDate,
+            payment_code: newSale.paymentCode,
+            total_price: newSale.totalPrice,
+            status: newSale.status,
+            created_at: newSale.createdAt,
+            updated_at: newSale.updatedAt,
+        } as OutputSaleDTO;
     }
 }
