@@ -14,3 +14,17 @@ export interface OutputSaleDTO {
     created_at: Date;
     updated_at: Date;
 }
+
+export interface SoldVehicleDTO {
+    sale_id: string;
+    vehicle_id: string;
+    vehicle_brand: string;
+    vehicle_model: string;
+    vehicle_year: number;
+    vehicle_color: string;
+    vehicle_price: number;
+    sale_date: Date;
+    sale_total_price: number;
+    payment_code: string;
+    sale_status: string;
+}

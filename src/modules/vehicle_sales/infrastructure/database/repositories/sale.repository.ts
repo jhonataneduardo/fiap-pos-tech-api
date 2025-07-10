@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 import prisma from '@/core/infrastructure/database/prisma.client';
 
-import { SaleRepositoryInterface } from "@/modules/vehicle_sales/domain/repositories/sale-respository.interface";
+import { SaleRepositoryInterface, SaleWithVehicleData } from "@/modules/vehicle_sales/domain/repositories/sale-respository.interface";
 import { SaleEntity } from "@/modules/vehicle_sales/domain/entities/sale.entity";
 import { SaleStatus } from "@/modules/vehicle_sales/domain/entities/enums";
 
@@ -84,5 +84,42 @@ export class PrismaSaleRepository implements SaleRepositoryInterface {
             createdAt: updatedSale.createdAt,
             updatedAt: updatedSale.updatedAt,
         });
+    }
+
+    async getSalesWithVehicles(txContext?: unknown): Promise<SaleWithVehicleData[]> {
+        const prismaClient = txContext ? txContext as PrismaClient : this.prisma;
+
+        const salesWithVehicles = await prismaClient.sale.findMany({
+            include: {
+                vehicle: true
+            },
+            orderBy: {
+                vehicle: {
+                    price: 'asc'
+                }
+            }
+        });
+
+        return salesWithVehicles.map((saleWithVehicle: any) => ({
+            sale: new SaleEntity({
+                id: saleWithVehicle.id,
+                vehicleId: saleWithVehicle.vehicleId,
+                customerId: saleWithVehicle.customerId,
+                saleDate: saleWithVehicle.saleDate,
+                paymentCode: saleWithVehicle.paymentCode,
+                totalPrice: saleWithVehicle.totalPrice,
+                status: saleWithVehicle.status as SaleStatus,
+                createdAt: saleWithVehicle.createdAt,
+                updatedAt: saleWithVehicle.updatedAt,
+            }),
+            vehicle: {
+                id: saleWithVehicle.vehicle.id,
+                brand: saleWithVehicle.vehicle.brand,
+                model: saleWithVehicle.vehicle.model,
+                year: saleWithVehicle.vehicle.year,
+                color: saleWithVehicle.vehicle.color,
+                price: saleWithVehicle.vehicle.price,
+            }
+        }));
     }
 }

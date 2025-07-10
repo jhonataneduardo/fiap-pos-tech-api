@@ -50,6 +50,14 @@ export class VehicleController {
     }
 
     static async getSoldVehicles(req: Request, res: Response) {
-        // Implement your logic to get sold vehicles
+        try {
+            const useCase = VehicleUseCaseFactory.findSoldVehiclesUseCase();
+            const response = await useCase.execute();
+
+            ApiResponseHandler.success(res, response, 200);
+        } catch (error) {
+            console.error('Error fetching sold vehicles:', error);
+            ApiResponseHandler.error(res, error as Error);
+        }
     }
 }
