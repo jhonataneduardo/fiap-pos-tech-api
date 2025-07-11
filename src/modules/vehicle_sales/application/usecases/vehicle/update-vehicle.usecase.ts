@@ -1,5 +1,5 @@
 import { UseCaseInterface } from "@/core/application/use-case.interface";
-import { NotFoundError } from "@/core/application/errors/app.error";
+import { BadRequestError, NotFoundError } from "@/core/application/errors/app.error";
 
 import { VehicleRepositoryInterface } from "@/modules/vehicle_sales/domain/repositories/vehicle-respository.interface";
 import { UpdateVehicleDTO, OutputVehicleDTO } from "@/modules/vehicle_sales/application/dtos/vehicle.dto";
@@ -27,7 +27,7 @@ export class UpdateVehicleUseCase implements UseCaseInterface<UpdateVehicleReque
         );
 
         if (!hasDataToUpdate) {
-            throw new Error("No data provided for update.");
+            throw new BadRequestError("No data provided for update.");
         }
 
         // Atualizar o veículo

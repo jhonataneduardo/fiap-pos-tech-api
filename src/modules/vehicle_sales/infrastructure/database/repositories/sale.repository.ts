@@ -59,8 +59,30 @@ export class PrismaSaleRepository implements SaleRepositoryInterface {
         });
     }
 
-    async updateSale(saleId: string, saleData: SaleEntity): Promise<SaleEntity> {
-        const updatedSale = await this.prisma.sale.update({
+    async getSaleByPaymentCode(paymentCode: string, txContext?: unknown): Promise<SaleEntity | null> {
+        const prismaClient = txContext ? txContext as PrismaClient : this.prisma;
+
+        const sale = await prismaClient.sale.findUnique({
+            where: { paymentCode: paymentCode },
+        });
+
+        return sale ? new SaleEntity({
+            id: sale.id,
+            vehicleId: sale.vehicleId,
+            customerId: sale.customerId,
+            saleDate: sale.saleDate,
+            paymentCode: sale.paymentCode,
+            totalPrice: sale.totalPrice,
+            status: sale.status as SaleStatus,
+            createdAt: sale.createdAt,
+            updatedAt: sale.updatedAt,
+        }) : null;
+    }
+
+    async updateSale(saleId: string, saleData: SaleEntity, txContext?: unknown): Promise<SaleEntity> {
+        const prismaClient = txContext ? txContext as PrismaClient : this.prisma;
+
+        const updatedSale = await prismaClient.sale.update({
             where: { id: saleId },
             data: {
                 vehicleId: saleData.vehicleId,
@@ -69,6 +91,30 @@ export class PrismaSaleRepository implements SaleRepositoryInterface {
                 paymentCode: saleData.paymentCode,
                 totalPrice: saleData.totalPrice,
                 status: saleData.status,
+                updatedAt: new Date(),
+            },
+        });
+
+        return new SaleEntity({
+            id: updatedSale.id,
+            vehicleId: updatedSale.vehicleId,
+            customerId: updatedSale.customerId,
+            saleDate: updatedSale.saleDate,
+            paymentCode: updatedSale.paymentCode,
+            totalPrice: updatedSale.totalPrice,
+            status: updatedSale.status as SaleStatus,
+            createdAt: updatedSale.createdAt,
+            updatedAt: updatedSale.updatedAt,
+        });
+    }
+
+    async updateSaleStatus(paymentCode: string, status: string, txContext?: unknown): Promise<SaleEntity> {
+        const prismaClient = txContext ? txContext as PrismaClient : this.prisma;
+
+        const updatedSale = await prismaClient.sale.update({
+            where: { paymentCode: paymentCode },
+            data: {
+                status: status,
                 updatedAt: new Date(),
             },
         });

@@ -13,8 +13,10 @@ export interface SaleWithVehicleData {
 }
 
 export interface SaleRepositoryInterface {
-  createSale(sale: SaleEntity): Promise<SaleEntity>;
-  getSaleById(saleId: string): Promise<SaleEntity>;
-  updateSale(saleId: string, saleData: SaleEntity): Promise<SaleEntity>;
+  createSale(sale: SaleEntity, txContext?: unknown): Promise<SaleEntity>;
+  getSaleById(saleId: string, txContext?: unknown): Promise<SaleEntity>;
+  getSaleByPaymentCode(paymentCode: string, txContext?: unknown): Promise<SaleEntity | null>;
+  updateSale(saleId: string, saleData: SaleEntity, txContext?: unknown): Promise<SaleEntity>;
+  updateSaleStatus(paymentCode: string, status: string, txContext?: unknown): Promise<SaleEntity>;
   getSalesWithVehicles(txContext?: unknown): Promise<SaleWithVehicleData[]>;
 }

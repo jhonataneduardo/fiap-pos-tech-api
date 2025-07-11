@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { ApiResponseHandler } from '@/core/infrastructure/http/responses';
 import { SaleUseCaseFactory } from '@/modules/vehicle_sales/infrastructure/factories/sale-usecase.factory';
-import { InputSaleDTO } from '@/modules/vehicle_sales/application/dtos/sale.dto';
+import { InputSaleDTO, PaymentWebhookDTO } from '@/modules/vehicle_sales/application/dtos/sale.dto';
 
 export class SaleController {
     static async createSale(req: Request, res: Response) {
@@ -19,6 +19,16 @@ export class SaleController {
     }
 
     static async updatePaymentStatus(req: Request, res: Response) {
-        // Implement your logic to update payment status
+        try {
+            const body = req.body as PaymentWebhookDTO;
+
+            const useCase = SaleUseCaseFactory.updatePaymentStatusUseCase();
+            const response = await useCase.execute(body);
+
+            ApiResponseHandler.success(res, response, 200);
+        } catch (error) {
+            console.error('Error updating payment status:', error);
+            ApiResponseHandler.error(res, error as Error);
+        }
     }
 }

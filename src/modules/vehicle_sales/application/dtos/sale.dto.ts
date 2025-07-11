@@ -28,3 +28,15 @@ export interface SoldVehicleDTO {
     payment_code: string;
     sale_status: string;
 }
+
+export interface PaymentWebhookDTO {
+    payment_code: string;
+    status: 'PAID' | 'CANCELLED';
+}
+
+export interface PaymentStatusResponseDTO {
+    payment_code: string;
+    previous_status: string;
+    new_status: string;
+    updated_at: Date;
+}
