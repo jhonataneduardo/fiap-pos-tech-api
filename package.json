@@ -11,7 +11,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "db:seed:dev": "ts-node --require tsconfig-paths/register src/core/infrastructure/database/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.11.0",
