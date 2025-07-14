@@ -1,13 +1,18 @@
 import { UseCaseInterface } from "@/core/application/use-case.interface";
 
 import { CustomerRepositoryInterface } from "@/modules/vehicle_sales/domain/repositories/customer-respository.interface";
-import { OutputCustomerDTO } from "@/modules/vehicle_sales/application/dtos/customer.dto";
+import { OutputCustomerDTO, CustomerQueryFiltersDTO } from "@/modules/vehicle_sales/application/dtos/customer.dto";
 
-export class ListAllCustomersUseCase implements UseCaseInterface<void, OutputCustomerDTO[]> {
+export class ListAllCustomersUseCase implements UseCaseInterface<CustomerQueryFiltersDTO | undefined, OutputCustomerDTO[]> {
     constructor(private readonly customerRepository: CustomerRepositoryInterface) { }
 
-    async execute(): Promise<OutputCustomerDTO[]> {
-        const customers = await this.customerRepository.getAllCustomers();
+    async execute(filters?: CustomerQueryFiltersDTO): Promise<OutputCustomerDTO[]> {
+        // Converter o DTO de filtros para o formato do repositório
+        const repositoryFilters = filters ? {
+            national_id: filters.national_id
+        } : undefined;
+
+        const customers = await this.customerRepository.getAllCustomers(repositoryFilters);
 
         return customers.map(customer => ({
             id: customer.id,

@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 import prisma from '@/core/infrastructure/database/prisma.client';
-import { CustomerRepositoryInterface } from "@/modules/vehicle_sales/domain/repositories/customer-respository.interface";
+import { CustomerRepositoryInterface, CustomerFilters } from "@/modules/vehicle_sales/domain/repositories/customer-respository.interface";
 import { CustomerEntity } from "@/modules/vehicle_sales/domain/entities/customer.entity";
 import { CustomerStatus } from "@/modules/vehicle_sales/domain/entities/enums";
 
@@ -55,10 +55,21 @@ export class PrismaCustomerRepository implements CustomerRepositoryInterface {
         }) : null;
     }
 
-    async getAllCustomers(txContext?: unknown): Promise<CustomerEntity[]> {
+    async getAllCustomers(filters?: CustomerFilters, txContext?: unknown): Promise<CustomerEntity[]> {
         const prismaClient = txContext ? txContext as PrismaClient : this.prisma;
 
+        // Construir o objeto where dinamicamente baseado nos filtros
+        const whereClause: any = {};
+        
+        if (filters?.national_id) {
+            whereClause.nationalId = {
+                contains: filters.national_id,
+                mode: 'insensitive'
+            };
+        }
+
         const customers = await prismaClient.customer.findMany({
+            where: whereClause,
             orderBy: {
                 createdAt: 'desc'
             }

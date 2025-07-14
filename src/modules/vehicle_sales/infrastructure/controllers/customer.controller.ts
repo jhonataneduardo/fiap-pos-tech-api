@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ApiResponseHandler } from '@/core/infrastructure/http/responses';
 
 import { CustomerUseCaseFactory } from '@/modules/vehicle_sales/infrastructure/factories/customer-usecase.factory';
-import { InputCustomerDTO } from '@/modules/vehicle_sales/application/dtos/customer.dto';
+import { InputCustomerDTO, CustomerQueryFiltersDTO } from '@/modules/vehicle_sales/application/dtos/customer.dto';
 
 export class CustomerController {
     static async createCustomer(req: Request, res: Response) {
@@ -21,8 +21,15 @@ export class CustomerController {
 
     static async getAllCustomers(req: Request, res: Response) {
         try {
+            // Extrair filtros da query string
+            const filters: CustomerQueryFiltersDTO = {};
+            
+            if (req.query.national_id && typeof req.query.national_id === 'string') {
+                filters.national_id = req.query.national_id;
+            }
+
             const useCase = CustomerUseCaseFactory.listAllCustomersUseCase();
-            const response = await useCase.execute();
+            const response = await useCase.execute(Object.keys(filters).length > 0 ? filters : undefined);
 
             ApiResponseHandler.success(res, response, 200);
         } catch (error) {

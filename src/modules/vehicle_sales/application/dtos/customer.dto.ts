@@ -16,3 +16,7 @@ export interface OutputCustomerDTO {
     created_at: Date;
     updated_at: Date;
 }
+
+export interface CustomerQueryFiltersDTO {
+    national_id?: string;
+}
