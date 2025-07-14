@@ -54,4 +54,24 @@ export class PrismaCustomerRepository implements CustomerRepositoryInterface {
             updatedAt: customer.updatedAt,
         }) : null;
     }
+
+    async getAllCustomers(txContext?: unknown): Promise<CustomerEntity[]> {
+        const prismaClient = txContext ? txContext as PrismaClient : this.prisma;
+
+        const customers = await prismaClient.customer.findMany({
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+
+        return customers.map((customer: any) => new CustomerEntity({
+            id: customer.id,
+            name: customer.name,
+            email: customer.email,
+            nationalId: customer.nationalId,
+            status: customer.status as CustomerStatus,
+            createdAt: customer.createdAt,
+            updatedAt: customer.updatedAt,
+        }));
+    }
 }

@@ -19,6 +19,18 @@ export class CustomerController {
         }
     }
 
+    static async getAllCustomers(req: Request, res: Response) {
+        try {
+            const useCase = CustomerUseCaseFactory.listAllCustomersUseCase();
+            const response = await useCase.execute();
+
+            ApiResponseHandler.success(res, response, 200);
+        } catch (error) {
+            console.error('Error fetching all customers:', error);
+            ApiResponseHandler.error(res, error as Error);
+        }
+    }
+
     static async getCustomerByNationalId(req: Request, res: Response) {
         const { nationalId } = req.params;
 
