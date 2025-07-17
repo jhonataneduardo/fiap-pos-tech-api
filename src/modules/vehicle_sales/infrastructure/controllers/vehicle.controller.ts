@@ -46,7 +46,15 @@ export class VehicleController {
     }
 
     static async getAvailableVehicles(req: Request, res: Response) {
-        // Implement your logic to get available vehicles
+        try {
+            const useCase = VehicleUseCaseFactory.findAvailableVehiclesUseCase();
+            const response = await useCase.execute();
+
+            ApiResponseHandler.success(res, response, 200);
+        } catch (error) {
+            console.error('Error fetching available vehicles:', error);
+            ApiResponseHandler.error(res, error as Error);
+        }
     }
 
     static async getSoldVehicles(req: Request, res: Response) {

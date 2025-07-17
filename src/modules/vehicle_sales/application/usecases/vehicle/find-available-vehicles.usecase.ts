@@ -1,8 +1,23 @@
 import { UseCaseInterface } from "@/core/application/use-case.interface";
 
-export class FindAvailableVehiclesUseCase implements UseCaseInterface<string, string> {
-    async execute(request?: string): Promise<string> {
-        // Implement your logic to find available vehicles
-        return "Available vehicles found successfully";
+import { VehicleRepositoryInterface } from "@/modules/vehicle_sales/domain/repositories/vehicle-respository.interface";
+import { OutputVehicleDTO } from "@/modules/vehicle_sales/application/dtos/vehicle.dto";
+
+export class FindAvailableVehiclesUseCase implements UseCaseInterface<void, OutputVehicleDTO[]> {
+    constructor(private readonly vehicleRepository: VehicleRepositoryInterface) { }
+
+    async execute(): Promise<OutputVehicleDTO[]> {
+        const availableVehicles = await this.vehicleRepository.getAvailableVehicles();
+
+        return availableVehicles.map(vehicle => ({
+            id: vehicle.id,
+            model: vehicle.model,
+            brand: vehicle.brand,
+            year: vehicle.year,
+            price: vehicle.price,
+            color: vehicle.color,
+            created_at: vehicle.createdAt,
+            updated_at: vehicle.updatedAt,
+        } as OutputVehicleDTO));
     }
 }

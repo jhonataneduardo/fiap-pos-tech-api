@@ -136,4 +136,30 @@ export class PrismaVehicleRepository implements VehicleRepositoryInterface {
             updatedAt: vehicle.updatedAt,
         }));
     }
+
+    async getAvailableVehicles(txContext?: unknown): Promise<VehicleEntity[]> {
+        const prismaClient = txContext ? txContext as PrismaClient : this.prisma;
+
+        const availableVehicles = await prismaClient.vehicle.findMany({
+            where: {
+                sales: {
+                    none: {} // Veículos que não têm nenhuma venda
+                }
+            },
+            orderBy: {
+                price: 'asc' // Ordenar do mais barato para o mais caro
+            }
+        });
+
+        return availableVehicles.map((vehicle: any) => new VehicleEntity({
+            id: vehicle.id,
+            model: vehicle.model,
+            brand: vehicle.brand,
+            year: vehicle.year,
+            price: vehicle.price,
+            color: vehicle.color,
+            createdAt: vehicle.createdAt,
+            updatedAt: vehicle.updatedAt,
+        }));
+    }
 }

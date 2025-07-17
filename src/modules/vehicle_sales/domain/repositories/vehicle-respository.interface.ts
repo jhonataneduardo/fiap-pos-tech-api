@@ -6,4 +6,5 @@ export interface VehicleRepositoryInterface {
     updateVehicle(vehicleId: string, vehicleData: VehicleEntity, txContext?: unknown): Promise<VehicleEntity>;
     updateVehiclePartial(vehicleId: string, vehicleData: Partial<Omit<VehicleEntity, 'id' | 'createdAt'>>, txContext?: unknown): Promise<VehicleEntity>;
     getAllVehicles(txContext?: unknown): Promise<VehicleEntity[]>;
+    getAvailableVehicles(txContext?: unknown): Promise<VehicleEntity[]>;
 }

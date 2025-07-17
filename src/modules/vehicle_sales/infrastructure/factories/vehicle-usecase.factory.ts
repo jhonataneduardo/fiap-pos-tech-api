@@ -3,10 +3,12 @@ import { RegisterNewVehicleUseCase } from "../../application/usecases/vehicle/re
 import { ListAllVehiclesUseCase } from "../../application/usecases/vehicle/list-all-vehicles.usecase";
 import { UpdateVehicleUseCase } from "../../application/usecases/vehicle/update-vehicle.usecase";
 import { FindSoldVehiclesUseCase } from "../../application/usecases/vehicle/find-sold-vehicles.usecase";
+import { FindAvailableVehiclesUseCase } from "../../application/usecases/vehicle/find-available-vehicles.usecase";
 
 export const VehicleUseCaseFactory = {
     registerNewVehicleUseCase: () => new RegisterNewVehicleUseCase(vehicleRepository),
     listAllVehiclesUseCase: () => new ListAllVehiclesUseCase(vehicleRepository),
     updateVehicleUseCase: () => new UpdateVehicleUseCase(vehicleRepository),
-    findSoldVehiclesUseCase: () => new FindSoldVehiclesUseCase(saleRepository)
+    findSoldVehiclesUseCase: () => new FindSoldVehiclesUseCase(saleRepository),
+    findAvailableVehiclesUseCase: () => new FindAvailableVehiclesUseCase(vehicleRepository)
 }
