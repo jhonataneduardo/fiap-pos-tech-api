@@ -114,7 +114,7 @@ export class PrismaSaleRepository implements SaleRepositoryInterface {
         const updatedSale = await prismaClient.sale.update({
             where: { paymentCode: paymentCode },
             data: {
-                status: status,
+                status: status as SaleStatus,
                 updatedAt: new Date(),
             },
         });

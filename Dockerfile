@@ -13,6 +13,8 @@ COPY . .
 
 RUN npx prisma generate --schema prisma/schema.prisma
 
+RUN yarn build && npx tsc-alias
+
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx prisma migrate deploy --schema prisma/schema.prisma && yarn build && yarn start"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema prisma/schema.prisma && yarn start"]
