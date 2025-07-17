@@ -2,8 +2,10 @@ import express, { Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import swaggerUi from 'swagger-ui-express';
 
 import mainRouter from '@/core/infrastructure/http/routes';
+import { swaggerSpec } from '@/core/infrastructure/swagger';
 
 class App {
     public server: Express;
@@ -24,6 +26,12 @@ class App {
     }
 
     private routes(): void {
+        this.server.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+            explorer: true,
+            customCss: '.swagger-ui .topbar { display: none }',
+            customSiteTitle: 'FIAP Pos Tech API Documentation'
+        }));
+
         this.server.use('/api/v1', mainRouter);
     }
 
