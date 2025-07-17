@@ -123,11 +123,6 @@ DB_PORT=5432
 docker-compose --profile dev up --build
 ```
 
-**Ambiente de Produção:**
-```bash
-docker-compose --profile production up --build
-```
-
 ### Execução Local
 
 1. **Instale as dependências:**
@@ -148,12 +143,6 @@ npm run db:seed:dev
 4. **Inicie o servidor de desenvolvimento:**
 ```bash
 npm run dev
-```
-
-5. **Para produção:**
-```bash
-npm run build
-npm start
 ```
 
 ## Documentação da API
