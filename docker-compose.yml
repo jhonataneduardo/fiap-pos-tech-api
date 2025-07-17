@@ -29,12 +29,12 @@ services:
     container_name: fiap-pos-tech-api
     restart: unless-stopped
     environment:
-      NODE_ENV: ${NODE_ENV}
+      NODE_ENV: production
       PORT: ${PORT}
       DATABASE_URL: ${DATABASE_URL}
       WEBHOOK_SECRET: ${WEBHOOK_SECRET}
     ports:
-      - "${PORT}:3000"
+      - "${PORT}:${PORT}"
     depends_on:
       fiap-pos-tech-db:
         condition: service_healthy
@@ -45,13 +45,6 @@ services:
       - fiap-pos-tech-network
     profiles:
       - production
-    command: >
-      sh -c "
-        echo 'Waiting for database...' &&
-        sleep 10 &&
-        npx prisma migrate deploy --schema prisma/schema.prisma &&
-        npm start
-      "
 
   fiap-pos-tech-api-dev:
     build:
