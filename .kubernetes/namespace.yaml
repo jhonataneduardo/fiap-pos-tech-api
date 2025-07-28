@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fiap-pos-tech
+  labels:
+    name: fiap-pos-tech
+    environment: production
