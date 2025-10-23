@@ -1,10 +1,9 @@
 import express from 'express';
-import { CustomerController } from '../controllers/customer.controller';
+import { CustomerApiController } from '../controllers/http/customer-api.controller';
 
 const CustomerRouter = express.Router();
 
-CustomerRouter.post('/customers', CustomerController.createCustomer);
-CustomerRouter.get('/customers', CustomerController.getAllCustomers);
-CustomerRouter.get('/customers/:nationalId', CustomerController.getCustomerByNationalId);
+CustomerRouter.post('/customers', CustomerApiController.createCustomer);
+CustomerRouter.get('/customers', CustomerApiController.getAllCustomers);
 
 export default CustomerRouter;

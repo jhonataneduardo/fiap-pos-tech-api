@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import prisma from '@/core/infrastructure/database/prisma.client';
 import { CustomerRepositoryInterface, CustomerFilters } from "@/modules/vehicle_sales/domain/repositories/customer-respository.interface";
 import { CustomerEntity } from "@/modules/vehicle_sales/domain/entities/customer.entity";
-import { CustomerStatus } from "@/modules/vehicle_sales/domain/entities/enums";
+import { CustomerMapper } from "../mappers/customer.mapper";
 
 export class PrismaCustomerRepository implements CustomerRepositoryInterface {
     private prisma: PrismaClient;
@@ -15,26 +15,10 @@ export class PrismaCustomerRepository implements CustomerRepositoryInterface {
         const prismaClient = txContext ? txContext as PrismaClient : this.prisma;
 
         const customer = await prismaClient.customer.create({
-            data: {
-                id: customerData.id,
-                name: customerData.name,
-                email: customerData.email,
-                nationalId: customerData.nationalId,
-                status: customerData.status as any,
-                createdAt: customerData.createdAt,
-                updatedAt: customerData.updatedAt,
-            },
+            data: CustomerMapper.toPersistence(customerData),
         });
 
-        return new CustomerEntity({
-            id: customer.id,
-            name: customer.name,
-            email: customer.email,
-            nationalId: customer.nationalId,
-            status: customer.status as CustomerStatus,
-            createdAt: customer.createdAt,
-            updatedAt: customer.updatedAt,
-        });
+        return CustomerMapper.toEntity(customer);
     }
 
     async getCustomerByNationalId(nationalId: string, txContext?: unknown): Promise<CustomerEntity | null> {
@@ -44,15 +28,7 @@ export class PrismaCustomerRepository implements CustomerRepositoryInterface {
             where: { nationalId: nationalId },
         });
 
-        return customer ? new CustomerEntity({
-            id: customer.id,
-            name: customer.name,
-            email: customer.email,
-            nationalId: customer.nationalId,
-            status: customer.status as CustomerStatus,
-            createdAt: customer.createdAt,
-            updatedAt: customer.updatedAt,
-        }) : null;
+        return customer ? CustomerMapper.toEntity(customer) : null;
     }
 
     async getAllCustomers(filters?: CustomerFilters, txContext?: unknown): Promise<CustomerEntity[]> {
@@ -60,7 +36,7 @@ export class PrismaCustomerRepository implements CustomerRepositoryInterface {
 
         // Construir o objeto where dinamicamente baseado nos filtros
         const whereClause: any = {};
-        
+
         if (filters?.national_id) {
             whereClause.nationalId = {
                 contains: filters.national_id,
@@ -75,14 +51,6 @@ export class PrismaCustomerRepository implements CustomerRepositoryInterface {
             }
         });
 
-        return customers.map((customer: any) => new CustomerEntity({
-            id: customer.id,
-            name: customer.name,
-            email: customer.email,
-            nationalId: customer.nationalId,
-            status: customer.status as CustomerStatus,
-            createdAt: customer.createdAt,
-            updatedAt: customer.updatedAt,
-        }));
+        return customers.map(customer => CustomerMapper.toEntity(customer));
     }
 }

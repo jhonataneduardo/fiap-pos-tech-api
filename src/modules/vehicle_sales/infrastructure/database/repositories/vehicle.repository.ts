@@ -4,6 +4,7 @@ import prisma from '@/core/infrastructure/database/prisma.client';
 
 import { VehicleRepositoryInterface } from "@/modules/vehicle_sales/domain/repositories/vehicle-respository.interface";
 import { VehicleEntity } from "@/modules/vehicle_sales/domain/entities/vehicle.entity";
+import { VehicleMapper } from "../mappers/vehicle.mapper";
 
 export class PrismaVehicleRepository implements VehicleRepositoryInterface {
     private prisma: PrismaClient;
@@ -15,28 +16,10 @@ export class PrismaVehicleRepository implements VehicleRepositoryInterface {
         const prismaClient = txContext ? txContext as PrismaClient : this.prisma;
 
         const vehicle = await prismaClient.vehicle.create({
-            data: {
-                id: vehicleData.id,
-                model: vehicleData.model,
-                brand: vehicleData.brand,
-                year: vehicleData.year,
-                price: vehicleData.price,
-                color: vehicleData.color,
-                createdAt: vehicleData.createdAt,
-                updatedAt: vehicleData.updatedAt,
-            },
+            data: VehicleMapper.toPersistence(vehicleData),
         });
 
-        return new VehicleEntity({
-            id: vehicle.id,
-            model: vehicle.model,
-            brand: vehicle.brand,
-            year: vehicle.year,
-            price: vehicle.price,
-            color: vehicle.color,
-            createdAt: vehicle.createdAt,
-            updatedAt: vehicle.updatedAt,
-        });
+        return VehicleMapper.toEntity(vehicle);
     }
 
     async getVehicleById(vehicleId: string, txContext?: unknown): Promise<VehicleEntity | null> {
@@ -46,16 +29,7 @@ export class PrismaVehicleRepository implements VehicleRepositoryInterface {
             where: { id: vehicleId },
         });
 
-        return vehicle ? new VehicleEntity({
-            id: vehicle.id,
-            model: vehicle.model,
-            brand: vehicle.brand,
-            year: vehicle.year,
-            price: vehicle.price,
-            color: vehicle.color,
-            createdAt: vehicle.createdAt,
-            updatedAt: vehicle.updatedAt,
-        }) : null;
+        return vehicle ? VehicleMapper.toEntity(vehicle) : null;
     }
 
     async updateVehicle(vehicleId: string, vehicleData: VehicleEntity, txContext?: unknown): Promise<VehicleEntity> {
@@ -73,16 +47,7 @@ export class PrismaVehicleRepository implements VehicleRepositoryInterface {
             },
         });
 
-        return new VehicleEntity({
-            id: updatedVehicle.id,
-            model: updatedVehicle.model,
-            brand: updatedVehicle.brand,
-            year: updatedVehicle.year,
-            price: updatedVehicle.price,
-            color: updatedVehicle.color,
-            createdAt: updatedVehicle.createdAt,
-            updatedAt: updatedVehicle.updatedAt,
-        });
+        return VehicleMapper.toEntity(updatedVehicle);
     }
 
     async updateVehiclePartial(vehicleId: string, vehicleData: Partial<Omit<VehicleEntity, 'id' | 'createdAt'>>, txContext?: unknown): Promise<VehicleEntity> {
@@ -104,16 +69,7 @@ export class PrismaVehicleRepository implements VehicleRepositoryInterface {
             data: updateData,
         });
 
-        return new VehicleEntity({
-            id: updatedVehicle.id,
-            model: updatedVehicle.model,
-            brand: updatedVehicle.brand,
-            year: updatedVehicle.year,
-            price: updatedVehicle.price,
-            color: updatedVehicle.color,
-            createdAt: updatedVehicle.createdAt,
-            updatedAt: updatedVehicle.updatedAt,
-        });
+        return VehicleMapper.toEntity(updatedVehicle);
     }
 
     async getAllVehicles(txContext?: unknown): Promise<VehicleEntity[]> {
@@ -125,16 +81,7 @@ export class PrismaVehicleRepository implements VehicleRepositoryInterface {
             }
         });
 
-        return vehicles.map((vehicle: any) => new VehicleEntity({
-            id: vehicle.id,
-            model: vehicle.model,
-            brand: vehicle.brand,
-            year: vehicle.year,
-            price: vehicle.price,
-            color: vehicle.color,
-            createdAt: vehicle.createdAt,
-            updatedAt: vehicle.updatedAt,
-        }));
+        return vehicles.map(vehicle => VehicleMapper.toEntity(vehicle));
     }
 
     async getAvailableVehicles(txContext?: unknown): Promise<VehicleEntity[]> {
@@ -151,15 +98,6 @@ export class PrismaVehicleRepository implements VehicleRepositoryInterface {
             }
         });
 
-        return availableVehicles.map((vehicle: any) => new VehicleEntity({
-            id: vehicle.id,
-            model: vehicle.model,
-            brand: vehicle.brand,
-            year: vehicle.year,
-            price: vehicle.price,
-            color: vehicle.color,
-            createdAt: vehicle.createdAt,
-            updatedAt: vehicle.updatedAt,
-        }));
+        return availableVehicles.map(vehicle => VehicleMapper.toEntity(vehicle));
     }
 }

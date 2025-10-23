@@ -1,9 +1,9 @@
 import express from 'express';
-import { SaleController } from '../controllers/sale.controller';
+import { SaleApiController } from '../controllers/http/sale-api.controller';
 
 const SaleRouter = express.Router();
 
-SaleRouter.post('/sales', SaleController.createSale);
-SaleRouter.post('/webhook/payment', SaleController.updatePaymentStatus);
+SaleRouter.post('/sales', SaleApiController.createSale);
+SaleRouter.post('/webhook/payment', SaleApiController.updatePaymentStatus);
 
 export default SaleRouter;
