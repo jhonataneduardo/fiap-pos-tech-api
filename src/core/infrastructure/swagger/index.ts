@@ -20,8 +20,21 @@ const swaggerDefinition = {
         }
     ],
     components: {
-        schemas
+        schemas,
+        securitySchemes: {
+            BearerAuth: {
+                type: 'http',
+                scheme: 'bearer',
+                bearerFormat: 'JWT',
+                description: 'Token JWT obtido através do serviço de autenticação (fiap-pos-tech-auth)'
+            }
+        }
     },
+    security: [
+        {
+            BearerAuth: []
+        }
+    ],
     paths
 };
 
