@@ -3,11 +3,11 @@ name: Code Quality & Security
 on:
   pull_request:
     branches:
-      - main
+      - master
       - develop
   push:
     branches:
-      - main
+      - master
       - develop
   schedule:
     # Executa toda segunda-feira às 9h UTC
@@ -237,7 +237,7 @@ jobs:
 
       - name: Generate coverage badge
         uses: cicirello/jacoco-badge-generator@v2
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           generate-branches-badge: true
           generate-summary: true

@@ -3,7 +3,7 @@ name: Release Management
 on:
   push:
     branches:
-      - main
+      - master
     paths-ignore:
       - '**.md'
       - 'docs/**'
@@ -101,7 +101,7 @@ jobs:
 
       - name: Push changes
         run: |
-          git push origin main --follow-tags
+          git push origin master --follow-tags
 
       - name: Create GitHub Release
         uses: actions/create-release@v1
