@@ -1,0 +1,64 @@
+# Dependabot Configuration
+# Mantém dependências atualizadas automaticamente
+
+version: 2
+updates:
+  # Atualizações de dependências npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Sao_Paulo"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "jhonataneduardo"
+    assignees:
+      - "jhonataneduardo"
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "automated"
+    versioning-strategy: increase
+    ignore:
+      # Ignora atualizações de major version para evitar breaking changes
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+  # Atualizações de GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:00"
+      timezone: "America/Sao_Paulo"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "jhonataneduardo"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "github-actions"
+      - "automated"
+
+  # Atualizações de Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "11:00"
+      timezone: "America/Sao_Paulo"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "jhonataneduardo"
+    commit-message:
+      prefix: "chore(docker)"
+    labels:
+      - "docker"
+      - "automated"

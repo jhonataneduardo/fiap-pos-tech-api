@@ -1,5 +1,10 @@
 # FIAP Pos Tech API
 
+[![CI](https://github.com/jhonataneduardo/fiap-pos-tech-api/workflows/CI/badge.svg)](https://github.com/jhonataneduardo/fiap-pos-tech-api/actions/workflows/ci.yml)
+[![CD](https://github.com/jhonataneduardo/fiap-pos-tech-api/workflows/CD/badge.svg)](https://github.com/jhonataneduardo/fiap-pos-tech-api/actions/workflows/cd.yml)
+[![Code Quality](https://github.com/jhonataneduardo/fiap-pos-tech-api/workflows/Code%20Quality%20%26%20Security/badge.svg)](https://github.com/jhonataneduardo/fiap-pos-tech-api/actions/workflows/code-quality.yml)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 API para gerenciamento de vendas de veículos desenvolvida como parte do Tech Challenge do curso de Arquitetura de Software da FIAP.
 
 ## Descrição
@@ -501,6 +506,78 @@ O projeto segue os princípios da **Clean Architecture** com **Domain-Driven Des
 - [Domain-Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [Swagger Documentation](https://swagger.io/docs/)
+
+## 🚀 CI/CD Pipeline
+
+Este projeto implementa um pipeline completo de **CI/CD** usando **GitHub Actions** com as seguintes características:
+
+### ⚡ Recursos
+
+- ✅ **Continuous Integration** - Testes e validações automáticas em PRs
+- ✅ **Continuous Deployment** - Deploy automático para staging e produção
+- ✅ **Code Quality** - Análise de código, segurança e dependências
+- ✅ **Semantic Release** - Versionamento automático seguindo Conventional Commits
+- ✅ **Security Scanning** - Trivy, CodeQL e análise de dependências
+- ✅ **Docker Build** - Build e push automático de imagens
+- ✅ **PR Automation** - Feedback automático em Pull Requests
+- ✅ **Branch Protection** - Regras de proteção para main e develop
+
+### 📚 Documentação do CI/CD
+
+Para informações completas sobre o pipeline de CI/CD, consulte:
+
+- **[📖 Documentação Completa do CI/CD](docs/CI-CD-PIPELINE.md)** - Guia detalhado de configuração e uso
+- **[⚡ Guia Rápido](docs/CI-CD-QUICK-GUIDE.md)** - Referência rápida de comandos e processos
+- **[📊 Diagrama de Workflow](docs/WORKFLOW-DIAGRAM.md)** - Visualização do fluxo de CI/CD
+
+### 🔄 Workflows Disponíveis
+
+| Workflow | Descrição | Trigger |
+|----------|-----------|---------|
+| **CI** | Validação de código e testes | Pull Request |
+| **CD** | Deploy automático | Push para main/develop |
+| **Code Quality** | Análise de segurança e qualidade | PR, Push, Schedule |
+| **Release** | Versionamento e changelog | Push para main |
+
+### 🚦 Como Contribuir
+
+1. **Crie uma branch:**
+   ```bash
+   git checkout -b feature/minha-feature
+   ```
+
+2. **Faça commits usando Conventional Commits:**
+   ```bash
+   git commit -m "feat: adiciona nova funcionalidade"
+   git commit -m "fix: corrige bug específico"
+   ```
+
+3. **Push e abra um Pull Request:**
+   ```bash
+   git push origin feature/minha-feature
+   ```
+
+4. **Aguarde o CI Pipeline:**
+   - ✅ Code Quality Check
+   - ✅ Tests
+   - ✅ Docker Build
+   - ✅ Security Scan
+
+5. **Code Review e Merge**
+
+**Tipos de commit disponíveis:**
+- `feat:` - Nova funcionalidade (MINOR)
+- `fix:` - Correção de bug (PATCH)
+- `docs:` - Documentação
+- `style:` - Formatação
+- `refactor:` - Refatoração (PATCH)
+- `perf:` - Performance (PATCH)
+- `test:` - Testes
+- `build:` - Build/deps (PATCH)
+- `ci:` - CI/CD
+- `chore:` - Manutenção
+
+**Consulte o [Guia Rápido](docs/CI-CD-QUICK-GUIDE.md) para mais detalhes.**
 
 ---
 
