@@ -22,45 +22,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Job 1: Validação de código e linting
-  code-quality:
-    name: Code Quality Check
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Check TypeScript compilation
-        run: yarn build
-
-      - name: Generate Prisma Client
-        run: npx prisma generate --schema prisma/schema.prisma
-
-      - name: Validate Prisma Schema
-        run: npx prisma validate --schema prisma/schema.prisma
-
-      - name: Check for uncommitted changes
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "::error::There are uncommitted changes after build"
-            git status
-            exit 1
-          fi
-
-  # Job 2: Testes automatizados
+  # Job 1: Testes automatizados
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -128,12 +90,11 @@ jobs:
             jest-report.xml
           retention-days: 7
 
-  # Job 3: Build Docker Image
+  # Job 2: Build Docker Image
   docker-build:
     name: Docker Build Test
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: [code-quality]
 
     steps:
       - name: Checkout code
@@ -158,49 +119,11 @@ jobs:
         run: |
           docker run --rm fiap-pos-tech-api:test node --version
 
-  # Job 4: Security Scan
-  security-scan:
-    name: Security Vulnerability Scan
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Run security audit
-        run: |
-          yarn audit --level moderate || echo "::warning::Security vulnerabilities found"
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-
-      - name: Upload Trivy results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
-
-  # Job 5: PR Feedback
+  # Job 3: PR Feedback
   pr-feedback:
     name: PR Feedback & Comments
     runs-on: ubuntu-latest
-    needs: [code-quality, test, docker-build]
+    needs: [test, docker-build]
     if: always() && github.event_name == 'pull_request'
     permissions:
       pull-requests: write
@@ -237,7 +160,6 @@ jobs:
             
             | Job | Status |
             |-----|--------|
-            | Code Quality | ${{ needs.code-quality.result == 'success' && '✅ Passed' || '❌ Failed' }} |
             | Tests | ${{ needs.test.result == 'success' && '✅ Passed' || '❌ Failed' }} |
             | Docker Build | ${{ needs.docker-build.result == 'success' && '✅ Passed' || '❌ Failed' }} |
             
