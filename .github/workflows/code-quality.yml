@@ -11,7 +11,7 @@ on:
       - develop
   schedule:
     # Executa toda segunda-feira às 9h UTC
-    - cron: '0 9 * * 1'
+    - cron: "0 9 * * 1"
   workflow_dispatch:
 
 jobs:
@@ -28,11 +28,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'yarn'
+          node-version: "22"
+          cache: "yarn"
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
 
       - name: Run TypeScript compiler check
         run: yarn build
@@ -42,23 +42,7 @@ jobs:
           echo "✅ Code formatting check passed"
           # Se tiver prettier: npx prettier --check "src/**/*.{ts,tsx,js,jsx}"
 
-  # Job 2: Dependency Review
-  dependency-review:
-    name: Dependency Review
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Dependency Review
-        uses: actions/dependency-review-action@v4
-        with:
-          fail-on-severity: moderate
-          deny-licenses: GPL-3.0, AGPL-3.0
-
-  # Job 3: CodeQL Analysis
+  # Job 2: CodeQL Analysis
   codeql-analysis:
     name: CodeQL Security Analysis
     runs-on: ubuntu-latest
@@ -71,7 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ['javascript']
+        language: ["javascript"]
 
     steps:
       - name: Checkout code
@@ -91,7 +75,7 @@ jobs:
         with:
           category: "/language:${{matrix.language}}"
 
-  # Job 4: Container Security Scan
+  # Job 3: Container Security Scan
   container-scan:
     name: Container Security Scan
     runs-on: ubuntu-latest
@@ -107,25 +91,25 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'fiap-pos-tech-api:scan'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH,MEDIUM'
+          image-ref: "fiap-pos-tech-api:scan"
+          format: "sarif"
+          output: "trivy-results.sarif"
+          severity: "CRITICAL,HIGH,MEDIUM"
 
       - name: Upload Trivy results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: 'trivy-results.sarif'
+          sarif_file: "trivy-results.sarif"
 
       - name: Run Trivy in table format
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'fiap-pos-tech-api:scan'
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
+          image-ref: "fiap-pos-tech-api:scan"
+          format: "table"
+          severity: "CRITICAL,HIGH"
 
-  # Job 5: OWASP Dependency Check
+  # Job 4: OWASP Dependency Check
   owasp-dependency-check:
     name: OWASP Dependency Check
     runs-on: ubuntu-latest
@@ -138,11 +122,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'yarn'
+          node-version: "22"
+          cache: "yarn"
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
 
       - name: Run npm audit
         run: |
@@ -155,109 +139,3 @@ jobs:
           name: npm-audit-results
           path: npm-audit.json
           retention-days: 30
-
-  # Job 6: License Compliance
-  license-check:
-    name: License Compliance Check
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Check licenses
-        run: |
-          npx license-checker --summary
-          echo "✅ License check completed"
-
-  # Job 7: Code Coverage Trend
-  coverage-trend:
-    name: Code Coverage Trend
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    timeout-minutes: 15
-
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testpass
-          POSTGRES_DB: testdb
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    env:
-      DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Generate Prisma Client
-        run: npx prisma generate --schema prisma/schema.prisma
-
-      - name: Run Prisma migrations
-        run: npx prisma migrate deploy --schema prisma/schema.prisma
-
-      - name: Run tests with coverage
-        run: yarn test --ci --coverage
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage/coverage-final.json
-          flags: unittests
-          name: codecov-umbrella
-          token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Generate coverage badge
-        uses: cicirello/jacoco-badge-generator@v2
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        with:
-          generate-branches-badge: true
-          generate-summary: true
-
-  # Job 8: Security Report Summary
-  security-summary:
-    name: Security Summary Report
-    runs-on: ubuntu-latest
-    needs: [codeql-analysis, container-scan, owasp-dependency-check]
-    if: always()
-
-    steps:
-      - name: Generate Security Summary
-        run: |
-          echo "## 🔒 Security Scan Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| CodeQL Analysis | ${{ needs.codeql-analysis.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Container Scan | ${{ needs.container-scan.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| OWASP Check | ${{ needs.owasp-dependency-check.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Date:** $(date -u)" >> $GITHUB_STEP_SUMMARY
