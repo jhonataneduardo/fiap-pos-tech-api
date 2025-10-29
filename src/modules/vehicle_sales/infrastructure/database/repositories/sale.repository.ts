@@ -5,6 +5,7 @@ import prisma from '@/core/infrastructure/database/prisma.client';
 import { SaleRepositoryInterface, SaleWithVehicleData } from "@/modules/vehicle_sales/domain/repositories/sale-respository.interface";
 import { SaleEntity } from "@/modules/vehicle_sales/domain/entities/sale.entity";
 import { SaleStatus } from "@/modules/vehicle_sales/domain/entities/enums";
+import { SaleMapper } from "../mappers/sale.mapper";
 
 export class PrismaSaleRepository implements SaleRepositoryInterface {
     private prisma: PrismaClient;
@@ -15,30 +16,10 @@ export class PrismaSaleRepository implements SaleRepositoryInterface {
 
     async createSale(saleData: SaleEntity): Promise<SaleEntity> {
         const sale = await this.prisma.sale.create({
-            data: {
-                id: saleData.id,
-                vehicleId: saleData.vehicleId,
-                customerId: saleData.customerId,
-                saleDate: saleData.saleDate,
-                paymentCode: saleData.paymentCode,
-                totalPrice: saleData.totalPrice,
-                status: saleData.status,
-                createdAt: saleData.createdAt,
-                updatedAt: saleData.updatedAt,
-            },
+            data: SaleMapper.toPersistence(saleData),
         });
 
-        return new SaleEntity({
-            id: sale.id,
-            vehicleId: sale.vehicleId,
-            customerId: sale.customerId,
-            saleDate: sale.saleDate,
-            paymentCode: sale.paymentCode,
-            totalPrice: sale.totalPrice,
-            status: sale.status as SaleStatus,
-            createdAt: sale.createdAt,
-            updatedAt: sale.updatedAt,
-        });
+        return SaleMapper.toEntity(sale);
     }
 
     async getSaleById(saleId: string): Promise<SaleEntity> {
@@ -46,17 +27,7 @@ export class PrismaSaleRepository implements SaleRepositoryInterface {
             where: { id: saleId },
         });
 
-        return new SaleEntity({
-            id: sale.id,
-            vehicleId: sale.vehicleId,
-            customerId: sale.customerId,
-            saleDate: sale.saleDate,
-            paymentCode: sale.paymentCode,
-            totalPrice: sale.totalPrice,
-            status: sale.status as SaleStatus,
-            createdAt: sale.createdAt,
-            updatedAt: sale.updatedAt,
-        });
+        return SaleMapper.toEntity(sale);
     }
 
     async getSaleByPaymentCode(paymentCode: string, txContext?: unknown): Promise<SaleEntity | null> {
@@ -66,17 +37,7 @@ export class PrismaSaleRepository implements SaleRepositoryInterface {
             where: { paymentCode: paymentCode },
         });
 
-        return sale ? new SaleEntity({
-            id: sale.id,
-            vehicleId: sale.vehicleId,
-            customerId: sale.customerId,
-            saleDate: sale.saleDate,
-            paymentCode: sale.paymentCode,
-            totalPrice: sale.totalPrice,
-            status: sale.status as SaleStatus,
-            createdAt: sale.createdAt,
-            updatedAt: sale.updatedAt,
-        }) : null;
+        return sale ? SaleMapper.toEntity(sale) : null;
     }
 
     async updateSale(saleId: string, saleData: SaleEntity, txContext?: unknown): Promise<SaleEntity> {
@@ -95,17 +56,7 @@ export class PrismaSaleRepository implements SaleRepositoryInterface {
             },
         });
 
-        return new SaleEntity({
-            id: updatedSale.id,
-            vehicleId: updatedSale.vehicleId,
-            customerId: updatedSale.customerId,
-            saleDate: updatedSale.saleDate,
-            paymentCode: updatedSale.paymentCode,
-            totalPrice: updatedSale.totalPrice,
-            status: updatedSale.status as SaleStatus,
-            createdAt: updatedSale.createdAt,
-            updatedAt: updatedSale.updatedAt,
-        });
+        return SaleMapper.toEntity(updatedSale);
     }
 
     async updateSaleStatus(paymentCode: string, status: string, txContext?: unknown): Promise<SaleEntity> {
@@ -119,17 +70,7 @@ export class PrismaSaleRepository implements SaleRepositoryInterface {
             },
         });
 
-        return new SaleEntity({
-            id: updatedSale.id,
-            vehicleId: updatedSale.vehicleId,
-            customerId: updatedSale.customerId,
-            saleDate: updatedSale.saleDate,
-            paymentCode: updatedSale.paymentCode,
-            totalPrice: updatedSale.totalPrice,
-            status: updatedSale.status as SaleStatus,
-            createdAt: updatedSale.createdAt,
-            updatedAt: updatedSale.updatedAt,
-        });
+        return SaleMapper.toEntity(updatedSale);
     }
 
     async getSalesWithVehicles(txContext?: unknown): Promise<SaleWithVehicleData[]> {
@@ -147,17 +88,7 @@ export class PrismaSaleRepository implements SaleRepositoryInterface {
         });
 
         return salesWithVehicles.map((saleWithVehicle: any) => ({
-            sale: new SaleEntity({
-                id: saleWithVehicle.id,
-                vehicleId: saleWithVehicle.vehicleId,
-                customerId: saleWithVehicle.customerId,
-                saleDate: saleWithVehicle.saleDate,
-                paymentCode: saleWithVehicle.paymentCode,
-                totalPrice: saleWithVehicle.totalPrice,
-                status: saleWithVehicle.status as SaleStatus,
-                createdAt: saleWithVehicle.createdAt,
-                updatedAt: saleWithVehicle.updatedAt,
-            }),
+            sale: SaleMapper.toEntity(saleWithVehicle),
             vehicle: {
                 id: saleWithVehicle.vehicle.id,
                 brand: saleWithVehicle.vehicle.brand,

@@ -25,3 +25,9 @@ export const smtpConfig = {
     user: process.env.SMTP_USER as string,
     password: process.env.SMTP_PASSWORD as string
 };
+
+export const keycloakConfig = {
+    url: process.env.KEYCLOAK_URL || 'http://localhost:8080',
+    realm: process.env.KEYCLOAK_REALM || 'fiap-pos-tech',
+    clientId: process.env.KEYCLOAK_CLIENT_ID || 'pos-tech-api',
+};

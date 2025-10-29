@@ -1,9 +1,13 @@
 import express from 'express';
-import { SaleController } from '../controllers/sale.controller';
+import { SaleApiController } from '../controllers/http/sale-api.controller';
+import { authenticate } from '@core/infrastructure/http/middlewares/auth.middleware';
 
 const SaleRouter = express.Router();
 
-SaleRouter.post('/sales', SaleController.createSale);
-SaleRouter.post('/webhook/payment', SaleController.updatePaymentStatus);
+// Criar venda requer autenticação
+SaleRouter.post('/sales', authenticate, SaleApiController.createSale);
+
+// Webhook de pagamento é público (autenticado via webhook secret)
+SaleRouter.post('/webhook/payment', SaleApiController.updatePaymentStatus);
 
 export default SaleRouter;
