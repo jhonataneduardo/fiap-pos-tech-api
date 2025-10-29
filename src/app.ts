@@ -6,15 +6,22 @@ import swaggerUi from 'swagger-ui-express';
 
 import mainRouter from '@/core/infrastructure/http/routes';
 import { swaggerSpec } from '@/core/infrastructure/swagger';
+import { setupDependencies } from '@/core/infrastructure/di/setup';
 
 class App {
     public server: Express;
 
     constructor() {
         this.server = express();
+        this.setupDependencyInjection();
         this.middlewares();
         this.routes();
         this.exceptionHandler();
+    }
+
+    private setupDependencyInjection(): void {
+        setupDependencies();
+        console.log('✅ Dependency Injection Container configured');
     }
 
     private middlewares(): void {
