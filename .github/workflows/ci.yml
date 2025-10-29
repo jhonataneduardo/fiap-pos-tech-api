@@ -68,7 +68,7 @@ jobs:
         run: npx prisma migrate deploy --schema prisma/schema.prisma
 
       - name: Run tests
-        run: yarn test --ci --coverage --maxWorkers=2
+        run: npx jest --ci --coverage --maxWorkers=2
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
