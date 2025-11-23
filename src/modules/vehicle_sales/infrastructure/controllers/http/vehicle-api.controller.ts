@@ -37,21 +37,7 @@ export class VehicleApiController {
         }
     }
 
-    /**
-     * GET /vehicles - Lista todos os vehicles
-     */
-    static async getAllVehicles(req: Request, res: Response): Promise<void> {
-        try {
-            const vehicleController = container.resolve<VehicleController>('VehicleController');
 
-            const vehicles = await vehicleController.listAllVehicles();
-
-            ApiResponseHandler.success(res, vehicles);
-        } catch (error) {
-            console.error("Error fetching vehicles:", error);
-            ApiResponseHandler.error(res, error as Error);
-        }
-    }
 
     /**
      * PATCH /vehicles/:id - Atualiza um vehicle
@@ -78,35 +64,5 @@ export class VehicleApiController {
         }
     }
 
-    /**
-     * GET /vehicles/available - Lista vehicles disponíveis
-     */
-    static async getAvailableVehicles(req: Request, res: Response): Promise<void> {
-        try {
-            const vehicleController = container.resolve<VehicleController>('VehicleController');
 
-            const vehicles = await vehicleController.listAvailableVehicles();
-
-            ApiResponseHandler.success(res, vehicles);
-        } catch (error) {
-            console.error("Error fetching available vehicles:", error);
-            ApiResponseHandler.error(res, error as Error);
-        }
-    }
-
-    /**
-     * GET /vehicles/sold - Lista vehicles vendidos
-     */
-    static async getSoldVehicles(req: Request, res: Response): Promise<void> {
-        try {
-            const vehicleController = container.resolve<VehicleController>('VehicleController');
-
-            const soldVehicles = await vehicleController.listSoldVehicles();
-
-            ApiResponseHandler.success(res, soldVehicles);
-        } catch (error) {
-            console.error("Error fetching sold vehicles:", error);
-            ApiResponseHandler.error(res, error as Error);
-        }
-    }
 }

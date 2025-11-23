@@ -5,10 +5,8 @@ import { authenticate } from '@core/infrastructure/http/middlewares/auth.middlew
 const VehicleRouter = express.Router();
 
 // Todas as rotas de vehicles requerem autenticação
+// Read endpoints moved to fiap-pos-tech-api-read service
 VehicleRouter.post('/vehicles', authenticate, VehicleApiController.createVehicle);
-VehicleRouter.get('/vehicles', authenticate, VehicleApiController.getAllVehicles);
 VehicleRouter.patch('/vehicles/:id', authenticate, VehicleApiController.updateVehicle);
-VehicleRouter.get('/vehicles/available', authenticate, VehicleApiController.getAvailableVehicles);
-VehicleRouter.get('/vehicles/sold', authenticate, VehicleApiController.getSoldVehicles);
 
 export default VehicleRouter;

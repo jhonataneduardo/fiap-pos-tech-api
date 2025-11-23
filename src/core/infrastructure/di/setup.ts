@@ -9,10 +9,7 @@ import { PrismaSaleRepository } from "@/modules/vehicle_sales/infrastructure/dat
 import { RegisterNewCustomerUseCase } from "@/modules/vehicle_sales/application/usecases/customer/register-new-customer.usecase";
 import { ListAllCustomersUseCase } from "@/modules/vehicle_sales/application/usecases/customer/list-all-customers.usecase";
 import { RegisterNewVehicleUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/register-new-vehicle.usecase";
-import { ListAllVehiclesUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/list-all-vehicles.usecase";
 import { UpdateVehicleUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/update-vehicle.usecase";
-import { FindAvailableVehiclesUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/find-available-vehicles.usecase";
-import { FindSoldVehiclesUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/find-sold-vehicles.usecase";
 import { RegisterNewSaleUseCase } from "@/modules/vehicle_sales/application/usecases/sale/register-new-sale.usecase";
 import { UpdatePaymentStatusUseCase } from "@/modules/vehicle_sales/application/usecases/sale/update-payment-status.usecase";
 
@@ -51,24 +48,9 @@ export function setupDependencies(): void {
         return new RegisterNewVehicleUseCase(vehicleRepository);
     });
 
-    container.registerFactory('ListAllVehiclesUseCase', () => {
-        const vehicleRepository = container.resolve<PrismaVehicleRepository>('VehicleRepository');
-        return new ListAllVehiclesUseCase(vehicleRepository);
-    });
-
     container.registerFactory('UpdateVehicleUseCase', () => {
         const vehicleRepository = container.resolve<PrismaVehicleRepository>('VehicleRepository');
         return new UpdateVehicleUseCase(vehicleRepository);
-    });
-
-    container.registerFactory('FindAvailableVehiclesUseCase', () => {
-        const vehicleRepository = container.resolve<PrismaVehicleRepository>('VehicleRepository');
-        return new FindAvailableVehiclesUseCase(vehicleRepository);
-    });
-
-    container.registerFactory('FindSoldVehiclesUseCase', () => {
-        const saleRepository = container.resolve<PrismaSaleRepository>('SaleRepository');
-        return new FindSoldVehiclesUseCase(saleRepository);
     });
 
     // Sale Use Cases
@@ -96,17 +78,11 @@ export function setupDependencies(): void {
 
     container.registerFactory('VehicleController', () => {
         const registerNewVehicleUseCase = container.resolve('RegisterNewVehicleUseCase');
-        const listAllVehiclesUseCase = container.resolve('ListAllVehiclesUseCase');
         const updateVehicleUseCase = container.resolve('UpdateVehicleUseCase');
-        const findAvailableVehiclesUseCase = container.resolve('FindAvailableVehiclesUseCase');
-        const findSoldVehiclesUseCase = container.resolve('FindSoldVehiclesUseCase');
         const { VehicleController } = require('@/modules/vehicle_sales/application/controllers/vehicle.controller');
         return new VehicleController(
             registerNewVehicleUseCase,
-            listAllVehiclesUseCase,
-            updateVehicleUseCase,
-            findAvailableVehiclesUseCase,
-            findSoldVehiclesUseCase
+            updateVehicleUseCase
         );
     });
 
