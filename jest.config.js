@@ -32,4 +32,29 @@ module.exports = {
         // Adicione outros mapeamentos se necessário
     },
     // --- Fim do Mapeamento ---
+
+    collectCoverageFrom: [
+        'src/**/*.{ts,tsx}',
+        '!src/**/*.d.ts',
+        '!src/server.ts',
+        '!src/app.ts',
+        '!src/config/**',
+        '!src/**/index.ts',
+        '!src/core/infrastructure/database/prisma.client.ts',
+        '!src/core/infrastructure/database/seed.ts',
+        '!src/core/infrastructure/database/transaction.ts',
+        '!src/core/infrastructure/di/**',
+        '!src/core/infrastructure/swagger/**',
+        '!src/**/*.routes.ts',
+        '!src/**/enums.ts',
+    ],
+    coverageThreshold: {
+        global: {
+            branches: 80,
+            functions: 80,
+            lines: 80,
+            statements: 80,
+        },
+    },
+    coverageReporters: ['text', 'lcov', 'html'],
 };
