@@ -273,6 +273,52 @@ POSTGRES_PASSWORD=fiap_pos_tech_password
 DB_PORT=5432
 ```
 
+### 🐳 Início Rápido com Docker Compose
+
+Este repositório inclui um `docker-compose.yml` independente para executar o serviço de forma isolada com seu próprio banco de dados PostgreSQL.
+
+#### Pré-requisitos
+- Docker e Docker Compose instalados
+- Keycloak em execução (para autenticação JWT) - veja [fiap-pos-tech-auth](../fiap-pos-tech-auth)
+
+#### Configuração do Ambiente
+
+1. **Copie o arquivo de ambiente**:
+```bash
+cp .env.example .env
+```
+
+2. **Inicie os serviços**:
+
+**Modo Desenvolvimento** (hot-reload + migrações + seeds):
+```bash
+docker compose --profile dev up -d
+```
+Acesso: http://localhost:3001
+
+**Modo Produção** (build otimizado):
+```bash
+docker compose --profile prd up -d --build
+```
+Acesso: http://localhost:3002
+
+#### Gerenciamento do Banco de Dados
+
+```bash
+# Acessar PostgreSQL
+docker exec -it fiap-pos-tech-api-db psql -U fiap_pos_tech_user -d fiap_pos_tech_db
+
+# Executar migrações manualmente
+docker exec -it fiap-pos-tech-api-dev npx prisma migrate dev
+
+# Ver logs
+docker compose logs -f fiap-pos-tech-api-dev  # ou fiap-pos-tech-api-prd
+
+# Parar serviços
+docker compose --profile dev down
+docker compose --profile prd down
+```
+
 ### Execução com Docker (Recomendado)
 
 **Ambiente de Desenvolvimento:**
