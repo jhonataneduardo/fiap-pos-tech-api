@@ -64,5 +64,21 @@ export class VehicleApiController {
         }
     }
 
+    /**
+     * GET /vehicles/:id - Busca um vehicle por ID
+     */
+    static async getVehicleById(req: Request, res: Response): Promise<void> {
+        try {
+            const vehicleController = container.resolve<VehicleController>('VehicleController');
+
+            const vehicleId = req.params.id;
+            const vehicle = await vehicleController.getVehicleById(vehicleId);
+
+            ApiResponseHandler.success(res, vehicle);
+        } catch (error) {
+            console.error("Error getting vehicle:", error);
+            ApiResponseHandler.error(res, error as Error);
+        }
+    }
 
 }

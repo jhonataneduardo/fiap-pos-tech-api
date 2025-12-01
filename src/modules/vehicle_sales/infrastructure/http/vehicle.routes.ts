@@ -8,5 +8,6 @@ const VehicleRouter = express.Router();
 // Read endpoints moved to fiap-pos-tech-api-read service
 VehicleRouter.post('/vehicles', authenticate, VehicleApiController.createVehicle);
 VehicleRouter.patch('/vehicles/:id', authenticate, VehicleApiController.updateVehicle);
+VehicleRouter.get('/vehicles/:id', authenticate, VehicleApiController.getVehicleById);
 
 export default VehicleRouter;
