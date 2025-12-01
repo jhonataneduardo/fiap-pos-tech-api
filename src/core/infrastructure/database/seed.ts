@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { CustomerStatus } from '@/modules/vehicle_sales/domain/entities/enums';
+import { CustomerStatus } from '@/modules/vehicles/domain/entities/enums';
 
 const prisma = new PrismaClient();
 

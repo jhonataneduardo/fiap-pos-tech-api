@@ -1,16 +1,16 @@
 import { container } from "./container";
 
 // Repositories
-import { PrismaCustomerRepository } from "@/modules/vehicle_sales/infrastructure/database/repositories/customer.repository";
-import { PrismaVehicleRepository } from "@/modules/vehicle_sales/infrastructure/database/repositories/vehicle.repository";
+import { PrismaCustomerRepository } from "@/modules/vehicles/infrastructure/database/repositories/customer.repository";
+import { PrismaVehicleRepository } from "@/modules/vehicles/infrastructure/database/repositories/vehicle.repository";
 
 // Use Cases
-import { RegisterNewCustomerUseCase } from "@/modules/vehicle_sales/application/usecases/customer/register-new-customer.usecase";
-import { ListAllCustomersUseCase } from "@/modules/vehicle_sales/application/usecases/customer/list-all-customers.usecase";
-import { RegisterNewVehicleUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/register-new-vehicle.usecase";
-import { UpdateVehicleUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/update-vehicle.usecase";
-import { GetVehicleByIdUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/get-vehicle-by-id.usecase";
-import { GetAllVehiclesUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/get-all-vehicles.usecase";
+import { RegisterNewCustomerUseCase } from "@/modules/vehicles/application/usecases/customer/register-new-customer.usecase";
+import { ListAllCustomersUseCase } from "@/modules/vehicles/application/usecases/customer/list-all-customers.usecase";
+import { RegisterNewVehicleUseCase } from "@/modules/vehicles/application/usecases/vehicle/register-new-vehicle.usecase";
+import { UpdateVehicleUseCase } from "@/modules/vehicles/application/usecases/vehicle/update-vehicle.usecase";
+import { GetVehicleByIdUseCase } from "@/modules/vehicles/application/usecases/vehicle/get-vehicle-by-id.usecase";
+import { GetAllVehiclesUseCase } from "@/modules/vehicles/application/usecases/vehicle/get-all-vehicles.usecase";
 
 /**
  * setupDependencies
@@ -67,7 +67,7 @@ export function setupDependencies(): void {
     container.registerFactory('CustomerController', () => {
         const registerNewCustomerUseCase = container.resolve('RegisterNewCustomerUseCase');
         const listAllCustomersUseCase = container.resolve('ListAllCustomersUseCase');
-        const { CustomerController } = require('@/modules/vehicle_sales/application/controllers/customer.controller');
+        const { CustomerController } = require('@/modules/vehicles/application/controllers/customer.controller');
         return new CustomerController(registerNewCustomerUseCase, listAllCustomersUseCase);
     });
 
@@ -76,7 +76,7 @@ export function setupDependencies(): void {
         const updateVehicleUseCase = container.resolve('UpdateVehicleUseCase');
         const getVehicleByIdUseCase = container.resolve('GetVehicleByIdUseCase');
         const getAllVehiclesUseCase = container.resolve('GetAllVehiclesUseCase');
-        const { VehicleController } = require('@/modules/vehicle_sales/application/controllers/vehicle.controller');
+        const { VehicleController } = require('@/modules/vehicles/application/controllers/vehicle.controller');
         return new VehicleController(
             registerNewVehicleUseCase,
             updateVehicleUseCase,
