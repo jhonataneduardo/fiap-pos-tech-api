@@ -81,4 +81,20 @@ export class VehicleApiController {
         }
     }
 
+    /**
+     * GET /vehicles - Lista todos os vehicles
+     */
+    static async getAllVehicles(req: Request, res: Response): Promise<void> {
+        try {
+            const vehicleController = container.resolve<VehicleController>('VehicleController');
+
+            const vehicles = await vehicleController.getAllVehicles();
+
+            ApiResponseHandler.success(res, vehicles);
+        } catch (error) {
+            console.error("Error getting vehicles:", error);
+            ApiResponseHandler.error(res, error as Error);
+        }
+    }
+
 }

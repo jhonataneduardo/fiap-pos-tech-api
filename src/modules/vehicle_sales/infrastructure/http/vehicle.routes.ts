@@ -6,6 +6,7 @@ const VehicleRouter = express.Router();
 
 // Todas as rotas de vehicles requerem autenticação
 // Read endpoints moved to fiap-pos-tech-api-read service
+VehicleRouter.get('/vehicles', authenticate, VehicleApiController.getAllVehicles);
 VehicleRouter.post('/vehicles', authenticate, VehicleApiController.createVehicle);
 VehicleRouter.patch('/vehicles/:id', authenticate, VehicleApiController.updateVehicle);
 VehicleRouter.get('/vehicles/:id', authenticate, VehicleApiController.getVehicleById);

@@ -87,12 +87,9 @@ export class PrismaVehicleRepository implements VehicleRepositoryInterface {
     async getAvailableVehicles(txContext?: unknown): Promise<VehicleEntity[]> {
         const prismaClient = txContext ? txContext as PrismaClient : this.prisma;
 
+        // Retorna todos os veículos ordenados por preço
+        // A lógica de disponibilidade (vendidos/não vendidos) agora é gerenciada pelo Sale API
         const availableVehicles = await prismaClient.vehicle.findMany({
-            where: {
-                sales: {
-                    none: {} // Veículos que não têm nenhuma venda
-                }
-            },
             orderBy: {
                 price: 'asc' // Ordenar do mais barato para o mais caro
             }

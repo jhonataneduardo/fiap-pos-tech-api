@@ -10,6 +10,7 @@ import { ListAllCustomersUseCase } from "@/modules/vehicle_sales/application/use
 import { RegisterNewVehicleUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/register-new-vehicle.usecase";
 import { UpdateVehicleUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/update-vehicle.usecase";
 import { GetVehicleByIdUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/get-vehicle-by-id.usecase";
+import { GetAllVehiclesUseCase } from "@/modules/vehicle_sales/application/usecases/vehicle/get-all-vehicles.usecase";
 
 /**
  * setupDependencies
@@ -55,6 +56,11 @@ export function setupDependencies(): void {
         return new GetVehicleByIdUseCase(vehicleRepository);
     });
 
+    container.registerFactory('GetAllVehiclesUseCase', () => {
+        const vehicleRepository = container.resolve<PrismaVehicleRepository>('VehicleRepository');
+        return new GetAllVehiclesUseCase(vehicleRepository);
+    });
+
     // ==========================================
     // CONTROLLERS (Clean Architecture - Application Layer)
     // ==========================================
@@ -69,11 +75,13 @@ export function setupDependencies(): void {
         const registerNewVehicleUseCase = container.resolve('RegisterNewVehicleUseCase');
         const updateVehicleUseCase = container.resolve('UpdateVehicleUseCase');
         const getVehicleByIdUseCase = container.resolve('GetVehicleByIdUseCase');
+        const getAllVehiclesUseCase = container.resolve('GetAllVehiclesUseCase');
         const { VehicleController } = require('@/modules/vehicle_sales/application/controllers/vehicle.controller');
         return new VehicleController(
             registerNewVehicleUseCase,
             updateVehicleUseCase,
-            getVehicleByIdUseCase
+            getVehicleByIdUseCase,
+            getAllVehiclesUseCase
         );
     });
 }
