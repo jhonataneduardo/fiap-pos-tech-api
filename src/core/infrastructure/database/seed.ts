@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { CustomerStatus, SaleStatus } from '@/modules/vehicle_sales/domain/entities/enums';
+import { CustomerStatus } from '@/modules/vehicle_sales/domain/entities/enums';
 
 const prisma = new PrismaClient();
 
@@ -69,33 +69,13 @@ const seedData = {
             price: 105000,
         },
     ],
-    sales: [
-        {
-            id: '01234567-89ab-cdef-0123-456789abcde7',
-            vehicleId: '01234567-89ab-cdef-0123-456789abcde2',
-            customerId: '01234567-89ab-cdef-0123-456789abcdef',
-            saleDate: new Date('2024-01-15T10:30:00.000Z'),
-            paymentCode: 'PAY-ABC12345',
-            totalPrice: 120000,
-            status: SaleStatus.PAID,
-        },
-        {
-            id: '01234567-89ab-cdef-0123-456789abcde8',
-            vehicleId: '01234567-89ab-cdef-0123-456789abcde3',
-            customerId: '01234567-89ab-cdef-0123-456789abcde0',
-            saleDate: new Date('2024-01-20T14:15:00.000Z'),
-            paymentCode: 'PAY-DEF67890',
-            totalPrice: 115000,
-            status: SaleStatus.PENDING,
-        },
-    ],
 };
 
 async function main() {
     console.log('🌱 Starting database seeding...');
 
     try {
-        await prisma.sale.deleteMany({});
+        // Clean existing data (only Customer and Vehicle now)
         await prisma.vehicle.deleteMany({});
         await prisma.customer.deleteMany({});
 
@@ -123,18 +103,8 @@ async function main() {
         }
         console.log(`✅ Created ${seedData.vehicles.length} vehicles`);
 
-        for (const sale of seedData.sales) {
-            await prisma.sale.create({
-                data: {
-                    ...sale,
-                    createdAt: new Date(),
-                    updatedAt: new Date(),
-                },
-            });
-        }
-        console.log(`✅ Created ${seedData.sales.length} sales`);
-
         console.log('🌱 Database seeding completed successfully!');
+        console.log('ℹ️  Note: Sales data is now managed by fiap-pos-tech-api-sale');
     } catch (error) {
         console.error('❌ Error during database seeding:', error);
         process.exit(1);
