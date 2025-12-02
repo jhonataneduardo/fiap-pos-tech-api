@@ -43,7 +43,7 @@ describe('PrismaCustomerRepository', () => {
                 updatedAt: new Date(),
             });
 
-            const prismаCustomer = {
+            const prismaCustomer = {
                 id: 'customer-1',
                 name: 'John Doe',
                 email: 'john@example.com',
