@@ -79,6 +79,56 @@ export const vehiclePaths = {
         }
     },
     '/vehicles/{id}': {
+        get: {
+            summary: 'Buscar veículo por ID',
+            description: 'Retorna os dados de um veículo específico',
+            tags: ['Vehicles'],
+            parameters: [
+                {
+                    in: 'path',
+                    name: 'id',
+                    required: true,
+                    schema: {
+                        type: 'string',
+                        format: 'uuid'
+                    },
+                    description: 'ID do veículo',
+                    example: '01234567-89ab-cdef-0123-456789abcdef'
+                }
+            ],
+            responses: {
+                200: {
+                    description: 'Veículo encontrado',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                allOf: [
+                                    { $ref: '#/components/schemas/ApiResponse' },
+                                    {
+                                        type: 'object',
+                                        properties: {
+                                            content: {
+                                                $ref: '#/components/schemas/Vehicle'
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                404: {
+                    description: 'Veículo não encontrado',
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/components/schemas/ApiError'
+                            }
+                        }
+                    }
+                }
+            }
+        },
         patch: {
             summary: 'Atualizar veículo',
             description: 'Atualiza dados de um veículo específico',

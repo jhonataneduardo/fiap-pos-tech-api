@@ -1,8 +1,7 @@
 import { Router } from 'express';
 
-import SaleRouter from '@/modules/vehicle_sales/infrastructure/http/sale.routes';
-import VehicleRouter from '@/modules/vehicle_sales/infrastructure/http/vehicle.routes';
-import CustomerRouter from '@/modules/vehicle_sales/infrastructure/http/customer.routes';
+import VehicleRouter from '@/modules/vehicles/infrastructure/http/vehicle.routes';
+import CustomerRouter from '@/modules/vehicles/infrastructure/http/customer.routes';
 
 const mainRouter = Router();
 
@@ -12,6 +11,5 @@ mainRouter.get('/health', (req, res) => {
 
 mainRouter.use('/', CustomerRouter);
 mainRouter.use('/', VehicleRouter);
-mainRouter.use('/', SaleRouter);
 
 export default mainRouter;

@@ -20,8 +20,10 @@ declare global {
 }
 
 // Cliente JWKS para obter a chave pública do Keycloak
+const jwksUri = `${keycloakConfig.url}/realms/${keycloakConfig.realm}/protocol/openid-connect/certs`;
+
 const client = jwksClient({
-  jwksUri: `${keycloakConfig.url}/realms/${keycloakConfig.realm}/protocol/openid-connect/certs`,
+  jwksUri,
   cache: true,
   cacheMaxEntries: 5,
   cacheMaxAge: 600000, // 10 minutos
@@ -79,15 +81,23 @@ export const authenticate = async (
 
     const token = parts[1];
 
+    // Aceita tanto o issuer interno (fiap-keycloak) quanto externo (localhost)
+    // Isso é necessário porque o Keycloak emite tokens com localhost:8080
+    // mas as APIs se comunicam internamente via fiap-keycloak:8080
+    const validIssuers: [string, ...string[]] = [
+      `${keycloakConfig.url}/realms/${keycloakConfig.realm}`, // http://fiap-keycloak:8080/realms/fiap-pos-tech
+      `http://localhost:8080/realms/${keycloakConfig.realm}`, // http://localhost:8080/realms/fiap-pos-tech
+    ];
+
     // Verifica e valida o token JWT usando a chave pública do Keycloak
     jwt.verify(
       token,
       getKey,
       {
         algorithms: ['RS256'],
-        issuer: `${keycloakConfig.url}/realms/${keycloakConfig.realm}`,
+        issuer: validIssuers, // Aceita múltiplos issuers
       },
-      (err, decoded) => {
+      (err: jwt.VerifyErrors | null, decoded: string | jwt.JwtPayload | undefined) => {
         if (err) {
           let message = 'Token inválido';
 
