@@ -4,31 +4,29 @@ import { CustomerStatus } from '@/modules/vehicles/domain/entities/enums';
 import { CustomerMapper } from '../mappers/customer.mapper';
 import { PrismaClient } from '@prisma/client';
 
-// Mock Prisma Client
-jest.mock('@/core/infrastructure/database/prisma.client', () => ({
-    __esModule: true,
-    default: {
-        customer: {
-            create: jest.fn(),
-            findUnique: jest.fn(),
-            findMany: jest.fn(),
-        },
-    },
-}));
-
 // Mock CustomerMapper
 jest.mock('../mappers/customer.mapper');
 
 describe('PrismaCustomerRepository', () => {
     let repository: PrismaCustomerRepository;
-    let mockPrisma: any;
+    let mockPrismaClient: any;
 
     beforeEach(() => {
         // Clear all mocks before each test
         jest.clearAllMocks();
         
+        // Create mock Prisma client
+        mockPrismaClient = {
+            customer: {
+                create: jest.fn(),
+                findUnique: jest.fn(),
+                findMany: jest.fn(),
+            },
+        };
+        
         repository = new PrismaCustomerRepository();
-        mockPrisma = (repository as any).prisma;
+        // Inject the mock into the repository
+        (repository as any).prisma = mockPrismaClient;
     });
 
     describe('createCustomer', () => {
@@ -55,12 +53,12 @@ describe('PrismaCustomerRepository', () => {
 
             (CustomerMapper.toPersistence as jest.Mock).mockReturnValue(prismaCustomer);
             (CustomerMapper.toEntity as jest.Mock).mockReturnValue(customerEntity);
-            mockPrisma.customer.create.mockResolvedValue(prismaCustomer);
+            mockPrismaClient.customer.create.mockResolvedValue(prismaCustomer);
 
             const result = await repository.createCustomer(customerEntity);
 
             expect(CustomerMapper.toPersistence).toHaveBeenCalledWith(customerEntity);
-            expect(mockPrisma.customer.create).toHaveBeenCalledWith({
+            expect(mockPrismaClient.customer.create).toHaveBeenCalledWith({
                 data: prismaCustomer,
             });
             expect(CustomerMapper.toEntity).toHaveBeenCalledWith(prismaCustomer);
@@ -129,12 +127,12 @@ describe('PrismaCustomerRepository', () => {
                 updatedAt: new Date(),
             });
 
-            mockPrisma.customer.findUnique.mockResolvedValue(prismaCustomer);
+            mockPrismaClient.customer.findUnique.mockResolvedValue(prismaCustomer);
             (CustomerMapper.toEntity as jest.Mock).mockReturnValue(customerEntity);
 
             const result = await repository.getCustomerByNationalId(nationalId);
 
-            expect(mockPrisma.customer.findUnique).toHaveBeenCalledWith({
+            expect(mockPrismaClient.customer.findUnique).toHaveBeenCalledWith({
                 where: { nationalId },
             });
             expect(CustomerMapper.toEntity).toHaveBeenCalledWith(prismaCustomer);
@@ -143,11 +141,11 @@ describe('PrismaCustomerRepository', () => {
 
         it('should return null when customer is not found', async () => {
             const nationalId = 'non-existent';
-            mockPrisma.customer.findUnique.mockResolvedValue(null);
+            mockPrismaClient.customer.findUnique.mockResolvedValue(null);
 
             const result = await repository.getCustomerByNationalId(nationalId);
 
-            expect(mockPrisma.customer.findUnique).toHaveBeenCalledWith({
+            expect(mockPrismaClient.customer.findUnique).toHaveBeenCalledWith({
                 where: { nationalId },
             });
             expect(CustomerMapper.toEntity).not.toHaveBeenCalled();
@@ -229,14 +227,14 @@ describe('PrismaCustomerRepository', () => {
                     })
             );
 
-            mockPrisma.customer.findMany.mockResolvedValue(prismaCustomers);
+            mockPrismaClient.customer.findMany.mockResolvedValue(prismaCustomers);
             (CustomerMapper.toEntity as jest.Mock).mockImplementation((c) =>
                 customerEntities.find((e) => e.id === c.id)
             );
 
             const result = await repository.getAllCustomers();
 
-            expect(mockPrisma.customer.findMany).toHaveBeenCalledWith({
+            expect(mockPrismaClient.customer.findMany).toHaveBeenCalledWith({
                 where: {},
                 orderBy: {
                     createdAt: 'desc',
@@ -269,12 +267,12 @@ describe('PrismaCustomerRepository', () => {
                 updatedAt: new Date(),
             });
 
-            mockPrisma.customer.findMany.mockResolvedValue(prismaCustomers);
+            mockPrismaClient.customer.findMany.mockResolvedValue(prismaCustomers);
             (CustomerMapper.toEntity as jest.Mock).mockReturnValue(customerEntity);
 
             const result = await repository.getAllCustomers(filters);
 
-            expect(mockPrisma.customer.findMany).toHaveBeenCalledWith({
+            expect(mockPrismaClient.customer.findMany).toHaveBeenCalledWith({
                 where: {
                     nationalId: {
                         contains: '123',
@@ -289,7 +287,7 @@ describe('PrismaCustomerRepository', () => {
         });
 
         it('should return empty array when no customers found', async () => {
-            mockPrisma.customer.findMany.mockResolvedValue([]);
+            mockPrismaClient.customer.findMany.mockResolvedValue([]);
 
             const result = await repository.getAllCustomers();
 
