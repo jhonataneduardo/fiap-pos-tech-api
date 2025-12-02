@@ -78,10 +78,10 @@ jobs:
         if: always()
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          test-script: npx jest --ci --coverage --maxWorkers=2 --passWithNoTests
           coverage-file: ./coverage/coverage-final.json
           base-coverage-file: ./coverage/coverage-final.json
-          annotations: all
+          skip-step: all
+          annotations: coverage
           package-manager: yarn
 
       - name: Upload coverage reports
